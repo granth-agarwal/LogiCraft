@@ -1,0 +1,45 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="aiohappyeyeballs" />
+          <option value="aiohttp" />
+          <option value="boto3" />
+          <option value="botocore" />
+          <option value="certifi" />
+          <option value="cffi" />
+          <option value="charset-normalizer" />
+          <option value="click" />
+          <option value="google-api-core" />
+          <option value="google-auth" />
+          <option value="google-cloud-logging" />
+          <option value="grpcio" />
+          <option value="humanize" />
+          <option value="opentelemetry-api" />
+          <option value="proto-plus" />
+          <option value="pyasn1" />
+          <option value="s3transfer" />
+          <option value="typing-extensions" />
+          <option value="tzdata" />
+          <option value="tzlocal" />
+          <option value="wcwidth" />
+          <option value="wrapt" />
+          <option value="yarl" />
+          <option value="autoflake" />
+          <option value="coverage" />
+          <option value="fakeredis" />
+          <option value="isort" />
+          <option value="platformdirs" />
+          <option value="pytest" />
+          <option value="types-pymysql" />
+          <option value="types-requests" />
+          <option value="cryptography" />
+          <option value="grpcio-status" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

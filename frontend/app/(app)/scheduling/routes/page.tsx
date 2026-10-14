@@ -1,0 +1,4 @@
+"use client";
+import {ResourcePage} from "@/components/resource-page";import {ModuleTabs} from "@/components/module-tabs";import type {Route} from "@/lib/types";
+const tabs=[{label:"Schedules",href:"/scheduling"},{label:"Routes",href:"/scheduling/routes"},{label:"Bookings",href:"/scheduling/bookings"}];
+export default function Page(){return <><ModuleTabs items={tabs}/><ResourcePage<Route> title="Routes" description="Ordered stops and expected travel time." endpoint="/scheduling/routes/" columns={[{key:"name",label:"Name"},{key:"stops",label:"Stops",render:r=>r.stops.join(" → ")},{key:"estimated_duration_minutes",label:"Duration min"}]} fields={[{name:"name",label:"Name",required:true},{name:"stops",label:"Stops (JSON array)",type:"json",required:true},{name:"estimated_duration_minutes",label:"Duration minutes",type:"number",required:true}]}/></>}

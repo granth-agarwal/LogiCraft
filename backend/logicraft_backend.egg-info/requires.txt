@@ -1,0 +1,15 @@
+Django<6,>=5.0
+djangorestframework<4,>=3.15
+django-filter<26,>=24
+django-cors-headers<5,>=4
+dj-database-url<3,>=2
+psycopg2-binary<3,>=2.9
+PyJWT[crypto]<3,>=2.8
+requests<3,>=2.31
+
+[dev]
+pytest>=8
+pytest-django>=4.8
+pytest-cov>=5
+factory-boy>=3.3
+freezegun>=1.5

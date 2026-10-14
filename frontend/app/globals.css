@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root{--background:220 22% 97%;--foreground:222 34% 10%;--card:0 0% 100%;--border:220 14% 89%;--accent:263 84% 58%}
+.dark{--background:225 20% 7%;--foreground:215 25% 92%;--card:225 18% 10%;--border:220 15% 18%;--accent:263 89% 66%}
+*{border-color:hsl(var(--border))} body{background:hsl(var(--background));color:hsl(var(--foreground));font-feature-settings:"ss01","cv02"}
+button,input,select,textarea{outline:none}.focus-ring:focus-visible{box-shadow:0 0 0 3px hsl(var(--accent)/.25)}
+

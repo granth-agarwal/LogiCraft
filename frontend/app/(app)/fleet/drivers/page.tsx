@@ -1,0 +1,5 @@
+"use client";
+import {ResourcePage} from "@/components/resource-page";import {ModuleTabs} from "@/components/module-tabs";import {StatusBadge} from "@/components/status-badge";import type {Driver} from "@/lib/types";
+const tabs=[{label:"Vehicles",href:"/fleet"},{label:"Drivers",href:"/fleet/drivers"},{label:"Trips",href:"/fleet/trips"},{label:"Maintenance",href:"/fleet/maintenance"}];
+export default function Page(){return <><ModuleTabs items={tabs}/><ResourcePage<Driver> title="Drivers" description="Licensing and driver availability." endpoint="/fleet/drivers/" columns={[{key:"license_number",label:"License"},{key:"license_expiry",label:"Expiry"},{key:"status",label:"Status",render:r=><StatusBadge status={r.status}/> }]} fields={[{name:"profile",label:"Profile ID",type:"number",required:true},{name:"license_number",label:"License number",required:true},{name:"license_expiry",label:"Expiry",type:"date",required:true},{name:"status",label:"Status",type:"select",options:[{label:"Available",value:"available"},{label:"On trip",value:"on_trip"},{label:"Off duty",value:"off_duty"}]}]}/></>}
+

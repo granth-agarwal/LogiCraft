@@ -1,0 +1,8 @@
+import {fireEvent,render,screen,waitFor} from "@testing-library/react";
+import {beforeEach,describe,expect,it,vi} from "vitest";
+import {ResourcePage} from "../resource-page";
+import {api} from "@/lib/api";
+vi.mock("@/lib/api",()=>({api:vi.fn(),ApiError:class extends Error{}}));
+type Row={id:number;name:string};
+describe("ResourcePage forms",()=>{beforeEach(()=>vi.mocked(api).mockResolvedValue({count:0,next:null,previous:null,results:[]}));it("uses a slide-over and submits to the matching API",async()=>{render(<ResourcePage<Row> title="Vehicles" description="Fleet" endpoint="/fleet/vehicles/" columns={[{key:"name",label:"Name"}]} fields={[{name:"name",label:"Name",required:true}]}/>);await waitFor(()=>expect(api).toHaveBeenCalledWith("/fleet/vehicles/"));fireEvent.click(screen.getByRole("button",{name:/Add/}));expect(screen.getByRole("dialog")).toBeInTheDocument();fireEvent.change(screen.getByLabelText("Name"),{target:{value:"Van"}});fireEvent.click(screen.getByRole("button",{name:"Save changes"}));await waitFor(()=>expect(api).toHaveBeenCalledWith("/fleet/vehicles/",expect.objectContaining({method:"POST",body:JSON.stringify({name:"Van"})}))) });it("shows inline JSON validation",async()=>{render(<ResourcePage<Row> title="Routes" description="Routes" endpoint="/routes/" columns={[{key:"name",label:"Name"}]} fields={[{name:"stops",label:"Stops",type:"json"}]}/>);fireEvent.click(screen.getByRole("button",{name:/Add/}));fireEvent.change(screen.getByLabelText("Stops"),{target:{value:"bad"}});fireEvent.submit(screen.getByRole("button",{name:"Save changes"}));expect(await screen.findByRole("alert")).toHaveTextContent("valid JSON")})});
+

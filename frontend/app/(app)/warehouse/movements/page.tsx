@@ -1,0 +1,5 @@
+"use client";
+import {ResourcePage} from "@/components/resource-page";import {ModuleTabs} from "@/components/module-tabs";import type {StockMovement} from "@/lib/types";
+const tabs=[{label:"Inventory",href:"/warehouse"},{label:"Locations",href:"/warehouse/locations"},{label:"Movements",href:"/warehouse/movements"}];
+export default function Page(){return <><ModuleTabs items={tabs}/><ResourcePage<StockMovement> title="Stock movements" description="Auditable inbound and outbound inventory." endpoint="/warehouse/movements/" columns={[{key:"item",label:"Item"},{key:"movement_type",label:"Direction"},{key:"quantity",label:"Quantity"},{key:"reason",label:"Reason"},{key:"created_at",label:"Created"}]} fields={[{name:"item",label:"Item ID",type:"number",required:true},{name:"warehouse",label:"Warehouse ID",type:"number",required:true},{name:"movement_type",label:"Direction",type:"select",required:true,options:[{label:"Inbound",value:"inbound"},{label:"Outbound",value:"outbound"}]},{name:"quantity",label:"Quantity",type:"number",required:true},{name:"reason",label:"Reason",required:true}]}/></>}
+

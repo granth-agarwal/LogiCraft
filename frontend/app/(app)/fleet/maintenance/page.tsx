@@ -1,0 +1,5 @@
+"use client";
+import {ResourcePage} from "@/components/resource-page";import {ModuleTabs} from "@/components/module-tabs";import type {MaintenanceRecord} from "@/lib/types";
+const tabs=[{label:"Vehicles",href:"/fleet"},{label:"Drivers",href:"/fleet/drivers"},{label:"Trips",href:"/fleet/trips"},{label:"Maintenance",href:"/fleet/maintenance"}];
+export default function Page(){return <><ModuleTabs items={tabs}/><ResourcePage<MaintenanceRecord> title="Maintenance" description="Service history and upcoming work." endpoint="/fleet/maintenance/" columns={[{key:"vehicle",label:"Vehicle"},{key:"service_date",label:"Service date"},{key:"next_due_date",label:"Next due"},{key:"cost",label:"Cost"}]} fields={[{name:"vehicle",label:"Vehicle ID",type:"number",required:true},{name:"service_date",label:"Service date",type:"date",required:true},{name:"next_due_date",label:"Next due",type:"date",required:true},{name:"description",label:"Description",required:true},{name:"cost",label:"Cost",type:"number",required:true}]}/></>}
+

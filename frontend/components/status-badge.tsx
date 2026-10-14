@@ -1,0 +1,5 @@
+import type {BookingStatus,ShipmentStatus,VehicleStatus} from "@/lib/types";
+type Status=VehicleStatus|ShipmentStatus|BookingStatus|"available"|"on_trip"|"off_duty"|"scheduled"|"in_progress"|"completed"|"cancelled";
+const colors:Record<Status,string>={active:"bg-emerald-500/15 text-emerald-400",maintenance:"bg-amber-500/15 text-amber-400",idle:"bg-sky-500/15 text-sky-400",retired:"bg-zinc-500/15 text-zinc-400",pending:"bg-amber-500/15 text-amber-400",picked_up:"bg-cyan-500/15 text-cyan-400",in_transit:"bg-violet-500/15 text-violet-400",delivered:"bg-emerald-500/15 text-emerald-400",failed:"bg-rose-500/15 text-rose-400",booked:"bg-violet-500/15 text-violet-400",cancelled:"bg-zinc-500/15 text-zinc-400",completed:"bg-emerald-500/15 text-emerald-400",available:"bg-emerald-500/15 text-emerald-400",on_trip:"bg-violet-500/15 text-violet-400",off_duty:"bg-zinc-500/15 text-zinc-400",scheduled:"bg-sky-500/15 text-sky-400",in_progress:"bg-violet-500/15 text-violet-400"};
+export function StatusBadge({status}:{status:Status}){return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${colors[status]}`}>{status.replaceAll("_"," ")}</span>}
+
