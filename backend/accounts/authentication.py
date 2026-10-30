@@ -5,6 +5,23 @@ from django.conf import settings
 from rest_framework.authentication import BaseAuthentication, get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
 from .models import Profile
+from rest_framework.authentication import SessionAuthentication
+from uuid import NAMESPACE_URL, uuid5
+
+class LocalSessionAuthentication(SessionAuthentication):
+    def authenticate(self, request):
+        if not settings.ENABLE_LOCAL_AUTH:
+            return None
+        result = super().authenticate(request)
+        if result is None:
+            return None
+        user, _ = result
+        profile, _ = Profile.objects.get_or_create(
+            supabase_user_id=uuid5(NAMESPACE_URL, f"logicraft-local-user:{user.pk}"),
+            defaults={"full_name": user.get_full_name() or user.username,
+                      "role": Profile.Role.ADMIN if user.is_superuser else Profile.Role.CUSTOMER},
+        )
+        return profile, None
 
 @lru_cache(maxsize=1)
 def _jwks_client():

@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q
+from django.db.models import Case, F, Value, When
 
 class Route(models.Model):
     name = models.CharField(max_length=255)
@@ -24,6 +24,10 @@ class Booking(models.Model):
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.BOOKED)
     fare = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+    active_seat = models.GeneratedField(
+        expression=Case(When(status="booked", then=F("seat_number")), default=Value(None)),
+        output_field=models.PositiveIntegerField(null=True), db_persist=True,
+    )
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["schedule", "seat_number"], condition=Q(status="booked"), name="unique_active_schedule_seat")]
+        constraints = [models.UniqueConstraint(fields=["schedule", "active_seat"], name="unique_active_schedule_seat")]
 

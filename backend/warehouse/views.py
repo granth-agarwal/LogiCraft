@@ -1,4 +1,5 @@
 from django.db.models import F
+from django.db import transaction
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -26,7 +27,12 @@ class InventoryItemViewSet(OperationsModelViewSet):
         item = adjust_inventory(item=self.get_object(), delta=serializer.validated_data["delta"], reason=serializer.validated_data["reason"], actor=request.user)
         return Response(self.get_serializer(item).data)
 class StockMovementViewSet(OperationsModelViewSet):
+    http_method_names = ["get", "post", "head", "options"]
     permission_classes = [IsAuthenticated, CanManageWarehouse]
     queryset = StockMovement.objects.select_related("item", "warehouse", "created_by").order_by("id"); serializer_class = StockMovementSerializer
     filterset_fields = ["item", "warehouse", "movement_type"]; ordering_fields = ["created_at"]
-    def perform_create(self, serializer): serializer.save(created_by=self.request.user)
+    @transaction.atomic
+    def perform_create(self, serializer):
+        data = serializer.validated_data
+        delta = data["quantity"] if data["movement_type"] == StockMovement.Type.INBOUND else -data["quantity"]
+        serializer.instance = adjust_inventory(item=data["item"], delta=delta, reason=data["reason"], actor=self.request.user).movements.latest("id")

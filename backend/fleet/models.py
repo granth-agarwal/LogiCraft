@@ -24,6 +24,7 @@ class Vehicle(models.Model):
     registration_number = models.CharField(max_length=64, unique=True)
     type = models.CharField(max_length=16, choices=Type.choices)
     capacity_kg = models.DecimalField(max_digits=12, decimal_places=2)
+    seat_capacity = models.PositiveIntegerField(default=40)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.IDLE)
     current_driver = models.ForeignKey(Driver, null=True, blank=True, on_delete=models.SET_NULL, related_name="assigned_vehicles")
     def __str__(self): return self.registration_number

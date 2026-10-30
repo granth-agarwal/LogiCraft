@@ -12,7 +12,7 @@ TRANSITIONS = {
 
 @transaction.atomic
 def update_shipment_status(*, shipment, status, note, actor):
-    locked = Shipment.objects.select_related("linked_item").select_for_update(of=("self",)).get(pk=shipment.pk)
+    locked = Shipment.objects.select_for_update().get(pk=shipment.pk)
     if status not in TRANSITIONS[locked.status]:
         raise ValidationError({"status": f"Cannot transition from {locked.status} to {status}."})
     if status == Shipment.Status.PICKED_UP and locked.linked_item:

@@ -27,8 +27,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL must be a Supabase Postgres connection string")
-DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=not DEBUG)}
+    raise RuntimeError("Set DATABASE_URL, for example mysql://logicraft:password@127.0.0.1:3306/logicraft")
+DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=60)}
+if DATABASES["default"]["ENGINE"] == "django.db.backends.mysql":
+    DATABASES["default"]["OPTIONS"] = {"charset": "utf8mb4", "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"}
 
 AUTH_PASSWORD_VALIDATORS = []
 LANGUAGE_CODE = "en-us"
@@ -40,9 +42,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOWED_ORIGINS = [x for x in os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",") if x]
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_JWT_AUDIENCE = os.getenv("SUPABASE_JWT_AUDIENCE", "authenticated")
+ENABLE_LOCAL_AUTH = os.getenv("ENABLE_LOCAL_AUTH", str(not bool(SUPABASE_URL))).lower() == "true"
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ["accounts.authentication.SupabaseJWTAuthentication"],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["accounts.authentication.SupabaseJWTAuthentication", "accounts.authentication.LocalSessionAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend", "rest_framework.filters.SearchFilter", "rest_framework.filters.OrderingFilter"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",

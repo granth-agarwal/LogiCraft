@@ -5,7 +5,7 @@ export type BookingStatus = "booked"|"cancelled"|"completed";
 export interface Page<T>{count:number;next:string|null;previous:string|null;results:T[]}
 export interface Profile{id:number;supabase_user_id:string;email?:string;full_name:string;role:Role;phone:string;warehouse:number|null;created_at:string}
 export interface Driver{id:number;profile:number;license_number:string;license_expiry:string;status:"available"|"on_trip"|"off_duty"}
-export interface Vehicle{id:number;registration_number:string;type:"truck"|"van"|"bus";capacity_kg:string;status:VehicleStatus;current_driver:number|null}
+export interface Vehicle{id:number;registration_number:string;type:"truck"|"van"|"bus";capacity_kg:string;seat_capacity:number;status:VehicleStatus;current_driver:number|null}
 export interface Trip{id:number;vehicle:number;driver:number;start_location:string;end_location:string;start_time:string;end_time:string|null;distance_km:string;status:"scheduled"|"in_progress"|"completed"|"cancelled";route_points:{lat:number;lng:number}[]}
 export interface MaintenanceRecord{id:number;vehicle:number;service_date:string;next_due_date:string;description:string;cost:string}
 export interface Warehouse{id:number;name:string;address:string;capacity_units:number;manager:number}

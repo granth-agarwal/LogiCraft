@@ -6,6 +6,16 @@ class DriverSerializer(serializers.ModelSerializer):
 
 class VehicleSerializer(serializers.ModelSerializer):
     class Meta: model = Vehicle; fields = "__all__"
+    def validate_current_driver(self, driver):
+        if driver and driver.status != Driver.Status.AVAILABLE:
+            raise serializers.ValidationError("Driver is not available.")
+        return driver
+    def validate_seat_capacity(self, value):
+        if value < 1:
+            raise serializers.ValidationError("Provide at least one seat.")
+        if self.instance and self.instance.schedules.filter(capacity__gt=value).exists():
+            raise serializers.ValidationError("Existing schedules exceed this seat capacity.")
+        return value
 
 class TripSerializer(serializers.ModelSerializer):
     class Meta: model = Trip; fields = "__all__"
