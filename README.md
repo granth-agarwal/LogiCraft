@@ -1,29 +1,61 @@
-# LogiCraft — P_012
+# LogiCraft
 
-A basic logistics and fleet management academic project.
+**P_012 · Logistics & Fleet Management**
 
-**Student:** Granth Agarwal
+A full-stack academic application for managing fleet operations, warehouse inventory, shipment tracking, and public transport scheduling and ticketing.
 
-**College:** ABES Engineering College, Ghaziabad
+| Academic detail | Information |
+| --- | --- |
+| Student | Granth Agarwal |
+| College | ABES Engineering College, Ghaziabad |
+| University | Dr. A. P. J. Abdul Kalam Technical University |
+| Assigned technologies | Python, Django, MySQL |
 
-**University:** Dr. A. P. J. Abdul Kalam Technical University
+## Features
 
-## Implemented features
+| Module | Functionality |
+| --- | --- |
+| Fleet management | Vehicle and driver CRUD, driver assignment, trip management, vehicle/trip statuses, and maintenance records |
+| Warehouse management | Warehouses, inventory quantities, inbound/outbound stock movements, negative-stock prevention, and low-stock indicators |
+| Shipment tracking | Unique tracking IDs, origins and destinations, vehicle/driver assignments, controlled status transitions, and status history |
+| Scheduling and ticketing | Routes with ordered stops, vehicle schedules, seat reservations, capacity validation, booking cancellation, and calculated fares |
 
-- Fleet: vehicle and driver CRUD, driver assignment, trips and statuses, maintenance records.
-- Warehouses: warehouses, inventory, inbound/outbound movements, nonnegative stock and low-stock indicators.
-- Shipments: unique tracking IDs, origins/destinations, vehicle/driver assignment, status updates and history.
-- Public transport: routes with ordered stops, vehicle schedules, seat booking with capacity limits, cancellation and basic fares (10 per stop-to-stop segment).
+Ticket fares use a flat rate of 10 per segment between consecutive stops. Application permissions distinguish administrators, fleet managers, warehouse staff, and customers.
 
-## Technology and prerequisites
+## Technology stack
 
-Python 3.11+, Django 5/REST Framework, **MySQL**, Next.js/React and Node.js 22.12+ with npm. Install MySQL 8.4+ and its client development libraries before installing `mysqlclient` (macOS: `brew install mysql pkg-config`; Ubuntu: `sudo apt install mysql-server default-libmysqlclient-dev build-essential pkg-config python3-dev`).
+- **Backend:** Python, Django 5, Django REST Framework.
+- **Database:** MySQL, accessed through Django's supported MySQL backend and `mysqlclient`.
+- **Frontend:** Next.js, React, TypeScript, and Tailwind CSS.
+- **Authentication:** Django accounts and sessions for local use; optional Supabase authentication is retained.
+- **Testing:** pytest/pytest-django and Vitest/React Testing Library.
 
-Local login uses Django accounts and sessions. Existing Supabase authentication remains optional; no cloud account is required for the default setup. PostgreSQL configuration is retained for existing installations, but the submission is tested on MySQL.
+MySQL is the verified submission database. Existing PostgreSQL configuration remains available for previous installations; PostgreSQL and Supabase are not required for the local setup below.
 
-## Database configuration
+## Prerequisites
 
-Start MySQL, then run `mysql -u root -p` and create the local database and test permissions:
+- Python **3.11 or later**, with virtual environment support.
+- Node.js **22.12 or later**, with npm.
+- MySQL **8.4 or later**, running locally.
+- MySQL client development libraries and a compiler for `mysqlclient`.
+
+Install the native database dependencies for your operating system:
+
+```bash
+# macOS with Homebrew
+brew install mysql pkg-config
+brew services start mysql
+
+# Ubuntu / Debian
+sudo apt install mysql-server default-libmysqlclient-dev build-essential pkg-config python3-dev python3-venv
+sudo service mysql start
+```
+
+The following terminal instructions use Bash/Zsh on macOS or Linux. After extracting the submission ZIP, open a terminal in the `LogiCraft` directory. Dependencies and local configuration are intentionally excluded from the ZIP and must be installed or created during setup.
+
+## Database and environment configuration
+
+Connect as a MySQL administrator using `mysql -u root -p` (or `sudo mysql` on installations using socket authentication), then run:
 
 ```sql
 CREATE DATABASE logicraft CHARACTER SET utf8mb4;
@@ -32,17 +64,40 @@ GRANT ALL PRIVILEGES ON logicraft.* TO 'logicraft'@'127.0.0.1';
 GRANT ALL PRIVILEGES ON test_logicraft.* TO 'logicraft'@'127.0.0.1';
 ```
 
-From the repository root, copy `.env.example` to `.env`. Set `DATABASE_URL` to your MySQL username, password, host and port, and choose a local `DJANGO_SECRET_KEY`. Settings read environment variables; load the file in each backend terminal. Local database SSL is not forced. An existing PostgreSQL URL can request SSL explicitly using `?sslmode=require`.
+`local-db-password` is an example value. Choose your own password and use the same value in the database URL. The second grant allows pytest to create and remove its separate test database.
 
-## Backend startup
-
-From the repository root (macOS/Linux shell):
+From the project root:
 
 ```bash
-cp .env.example .env  # first setup only; edit it before continuing
+cp .env.example .env
+```
+
+Edit `.env` to match your local MySQL connection and replace the secret-key placeholder:
+
+```dotenv
+DATABASE_URL=mysql://logicraft:local-db-password@127.0.0.1:3306/logicraft
+DJANGO_SECRET_KEY=replace-with-your-own-local-secret
+DEBUG=true
+ENABLE_LOCAL_AUTH=true
+```
+
+Generate a secret key with `python3 -c 'import secrets; print(secrets.token_urlsafe(48))'`. URL-encode any special characters in the database password when placing it in `DATABASE_URL`.
+
+Load the configuration in each backend terminal before running Django commands:
+
+```bash
 set -a
 source .env
 set +a
+```
+
+Django reads environment variables directly; it does not automatically load `.env`. Local database connections do not require SSL. Keep `.env` private; the included `.env.example` contains placeholders only.
+
+## Run the backend
+
+With the environment loaded, run from the project root:
+
+```bash
 cd backend
 python3 -m venv .venv
 source .venv/bin/activate
@@ -52,11 +107,18 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-The superuser's username and password also log into the frontend with application admin permissions. Its Profile ID appears in the app header after login; use it for driver profiles and warehouse managers. Other local accounts created in Django admin receive customer permissions by default; application roles can be managed under Profiles after their first login.
+| Service | Local address |
+| --- | --- |
+| REST API | http://localhost:8000/api/v1/ |
+| Django administration | http://localhost:8000/admin/ |
 
-## Frontend startup
+Sign into the frontend using the superuser credentials you created. The corresponding application profile receives administrator permissions on first login. Other Django accounts receive customer permissions by default; application roles can be edited under **Profiles** in Django administration after their first application login.
 
-In another terminal, from the repository root:
+For later runs, load `.env` from the project root, activate `backend/.venv`, and start `python manage.py runserver` from `backend`.
+
+## Run the frontend
+
+In a second terminal, start from the project root:
 
 ```bash
 cd frontend
@@ -64,34 +126,41 @@ npm ci
 npm run dev
 ```
 
-Open **http://localhost:3000** and sign in. Use `localhost` consistently for the frontend and backend so session cookies work. Tables display record IDs for related forms; click a row to edit/delete it. Use stock adjustments or stock movements to receive/dispatch inventory. Open a shipment row to see its history. Book tickets from Schedules and cancel them from Bookings.
+Open **http://localhost:3000**. Use `localhost` consistently for both services so session cookies work. No frontend environment file is required for the default local setup.
 
-For an existing Supabase setup, set backend `SUPABASE_URL` and `ENABLE_LOCAL_AUTH=false`, and set `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` in `frontend/.env.local`; roles come from trusted `app_metadata.role`. Restart both servers after changing configuration.
+- Tables display record IDs; use these IDs in related-record forms.
+- The header displays your Profile ID, which can be used for driver profiles and warehouse managers.
+- Click an editable row to update or delete it.
+- Receive or dispatch inventory through stock adjustments or stock movements.
+- Open a shipment row to inspect its status history.
+- Reserve seats from **Schedules** and cancel reservations from **Bookings**.
 
-## Local tests
+For an existing Supabase installation, set backend `SUPABASE_URL` and `ENABLE_LOCAL_AUTH=false`; place `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `frontend/.env.local`. Application roles are read from trusted `app_metadata.role`. Restart both services after configuration changes.
 
-With `.env` loaded and the backend virtual environment active:
+## Run local checks and tests
+
+In a backend terminal with `.env` loaded and the virtual environment active, run from `backend`:
 
 ```bash
-cd backend  # from repository root
 python manage.py check
 python manage.py migrate
 pytest -q
 ```
 
-In a separate terminal, from the repository root:
+In a frontend terminal, run from `frontend`:
 
 ```bash
-cd frontend
 npm ci
 npm test
 npm run build
-# Optional: serve the production build instead of the development server
-npm run start
 ```
 
-Backend tests use a separate `test_logicraft` MySQL database. There is no CI pipeline, E2E framework or coverage gate.
+To serve the production build, stop the frontend development server and run `npm run start` from `frontend`.
+
+The last application verification completed with **152 backend tests passed**, **12 frontend tests passed**, and a successful frontend production build. All four required workflows were also exercised through frontend forms against Django and MySQL. These results precede the packaging cleanup; dependency folders and generated test/build artifacts are not included in the submission. There is no CI pipeline, Playwright dependency, or coverage threshold.
 
 ## Known limitations
 
-Basic local academic application: no live GPS, payments or automatic schedule optimization. Related records are selected by numeric ID. MySQL is the verified submission database; remote Supabase login requires a configured project and was not live-tested during local verification.
+- This project provides the required academic workflows; live GPS, payment processing, and automatic scheduling optimization are outside its scope.
+- Related records are entered using numeric IDs.
+- The verified setup uses local MySQL and Django login. Optional remote Supabase authentication requires a configured project and was not live-tested during local verification.
